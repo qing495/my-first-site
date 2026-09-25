@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>我的第一个网站</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+
+            background: #f3efe4;
+            color: #222;
+        }
+
+        .card {
+            width: min(500px, 90%);
+            padding: 48px;
+
+            background: white;
+            border: 3px solid #222;
+            border-radius: 16px;
+
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 36px;
+        }
+
+        p {
+            line-height: 1.7;
+            color: #666;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 24px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #d63b32;
+            color: white;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>我的第一个网站</h1>
+
+    <p>
+        这个页面已经运行起来了。
+        下一步，我会把它发布到互联网上。
+    </p>
+
+    <button onclick="hello()">
+        点击测试
+    </button>
+
+</div>
+
+<script>
+    function hello() {
+        alert("你好！网站运行正常。");
+    }
+</script>
+
+</body>
+</html>
