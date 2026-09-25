@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>我的第一个网站</title>
+    <title>收集星星小游戏</title>
 
     <style>
         * {
@@ -19,44 +20,104 @@
             justify-content: center;
             align-items: center;
 
-            font-family: Arial, "Microsoft YaHei", sans-serif;
-
             background: #f3efe4;
+
+            font-family:
+                Arial,
+                "Microsoft YaHei",
+                sans-serif;
+
             color: #222;
         }
 
-        .card {
-            width: min(500px, 90%);
-            padding: 48px;
-
-            background: white;
-            border: 3px solid #222;
-            border-radius: 16px;
-
+        .game-wrapper {
             text-align: center;
         }
 
         h1 {
-            margin-top: 0;
-            font-size: 36px;
+            margin-bottom: 10px;
         }
 
-        p {
-            line-height: 1.7;
-            color: #666;
+        .info {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        #score {
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        #game {
+            position: relative;
+
+            width: 640px;
+            height: 420px;
+
+            max-width: 90vw;
+
+            background: white;
+
+            border: 4px solid #222;
+            border-radius: 12px;
+
+            overflow: hidden;
+        }
+
+        /* 玩家 */
+        #player {
+            position: absolute;
+
+            width: 36px;
+            height: 36px;
+
+            left: 40px;
+            top: 40px;
+
+            background: #3977d4;
+
+            border: 3px solid #222;
+            border-radius: 8px;
+        }
+
+        /* 收集物 */
+        #item {
+            position: absolute;
+
+            width: 28px;
+            height: 28px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 28px;
+
+            user-select: none;
+        }
+
+        #message {
+            height: 32px;
+
+            margin-top: 12px;
+
+            font-size: 22px;
+            font-weight: bold;
         }
 
         button {
-            margin-top: 20px;
-            padding: 12px 24px;
+            margin-top: 10px;
+
+            padding: 10px 20px;
 
             border: none;
             border-radius: 8px;
 
-            background: #d63b32;
+            background: #222;
             color: white;
 
             font-size: 16px;
+
             cursor: pointer;
         }
 
@@ -66,28 +127,323 @@
     </style>
 </head>
 
+
 <body>
 
-<div class="card">
+<div class="game-wrapper">
 
-    <h1>我的第一个网站</h1>
+    <h1>⭐ 收集星星</h1>
 
-    <p>
-        这个页面已经运行起来了。
-        下一步，我会把它发布到互联网上。
-    </p>
+    <div class="info">
+        使用
+        <strong>方向键 / WASD</strong>
+        移动
+        &nbsp;｜&nbsp;
+        分数：
+        <span id="score">0</span>
+        / 10
+    </div>
 
-    <button onclick="hello()">
-        点击测试
+
+    <div id="game">
+
+        <div id="player"></div>
+
+        <div id="item">
+            ⭐
+        </div>
+
+    </div>
+
+
+    <div id="message"></div>
+
+    <button onclick="resetGame()">
+        重新开始
     </button>
 
 </div>
 
+
 <script>
-    function hello() {
-        alert("你好！网站运行正常。");
+
+    // =========================
+    // 获取网页里的游戏对象
+    // =========================
+
+    const game =
+        document.getElementById("game");
+
+    const player =
+        document.getElementById("player");
+
+    const item =
+        document.getElementById("item");
+
+    const scoreText =
+        document.getElementById("score");
+
+    const message =
+        document.getElementById("message");
+
+
+    // =========================
+    // 游戏数据
+    // =========================
+
+    let playerX = 40;
+    let playerY = 40;
+
+    let score = 0;
+
+    const playerSize = 36;
+    const itemSize = 28;
+
+    // 每次移动多少像素
+    const speed = 20;
+
+    // 胜利需要多少分
+    const targetScore = 10;
+
+
+    // =========================
+    // 更新玩家位置
+    // =========================
+
+    function updatePlayer() {
+
+        player.style.left =
+            playerX + "px";
+
+        player.style.top =
+            playerY + "px";
     }
+
+
+    // =========================
+    // 随机移动星星
+    // =========================
+
+    function moveItem() {
+
+        const gameWidth =
+            game.clientWidth;
+
+        const gameHeight =
+            game.clientHeight;
+
+
+        const maxX =
+            gameWidth - itemSize;
+
+        const maxY =
+            gameHeight - itemSize;
+
+
+        const newX =
+            Math.floor(
+                Math.random() * maxX
+            );
+
+        const newY =
+            Math.floor(
+                Math.random() * maxY
+            );
+
+
+        item.style.left =
+            newX + "px";
+
+        item.style.top =
+            newY + "px";
+    }
+
+
+    // =========================
+    // 判断有没有碰到星星
+    // =========================
+
+    function checkCollision() {
+
+        const playerRect =
+            player.getBoundingClientRect();
+
+        const itemRect =
+            item.getBoundingClientRect();
+
+
+        const collided =
+            playerRect.left < itemRect.right &&
+            playerRect.right > itemRect.left &&
+            playerRect.top < itemRect.bottom &&
+            playerRect.bottom > itemRect.top;
+
+
+        if (collided) {
+
+            score++;
+
+            scoreText.textContent =
+                score;
+
+
+            // 达到目标分数
+            if (score >= targetScore) {
+
+                message.textContent =
+                    "🎉 胜利！你收集了所有星星！";
+
+                item.style.display =
+                    "none";
+
+            } else {
+
+                moveItem();
+
+            }
+        }
+    }
+
+
+    // =========================
+    // 键盘移动
+    // =========================
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            const gameWidth =
+                game.clientWidth;
+
+            const gameHeight =
+                game.clientHeight;
+
+
+            // 左
+            if (
+                event.key === "ArrowLeft" ||
+                event.key.toLowerCase() === "a"
+            ) {
+
+                playerX -= speed;
+
+            }
+
+
+            // 右
+            if (
+                event.key === "ArrowRight" ||
+                event.key.toLowerCase() === "d"
+            ) {
+
+                playerX += speed;
+
+            }
+
+
+            // 上
+            if (
+                event.key === "ArrowUp" ||
+                event.key.toLowerCase() === "w"
+            ) {
+
+                playerY -= speed;
+
+            }
+
+
+            // 下
+            if (
+                event.key === "ArrowDown" ||
+                event.key.toLowerCase() === "s"
+            ) {
+
+                playerY += speed;
+
+            }
+
+
+            // =========================
+            // 防止角色跑出地图
+            // =========================
+
+            playerX =
+                Math.max(
+                    0,
+                    Math.min(
+                        playerX,
+                        gameWidth - playerSize
+                    )
+                );
+
+
+            playerY =
+                Math.max(
+                    0,
+                    Math.min(
+                        playerY,
+                        gameHeight - playerSize
+                    )
+                );
+
+
+            updatePlayer();
+
+            checkCollision();
+
+
+            // 防止方向键滚动网页
+            if (
+                event.key.startsWith("Arrow")
+            ) {
+
+                event.preventDefault();
+
+            }
+        }
+    );
+
+
+    // =========================
+    // 重新开始
+    // =========================
+
+    function resetGame() {
+
+        score = 0;
+
+        playerX = 40;
+        playerY = 40;
+
+
+        scoreText.textContent =
+            score;
+
+        message.textContent =
+            "";
+
+        item.style.display =
+            "flex";
+
+
+        updatePlayer();
+
+        moveItem();
+    }
+
+
+    // =========================
+    // 游戏开始
+    // =========================
+
+    updatePlayer();
+
+    moveItem();
+
 </script>
 
+
 </body>
+
 </html>
