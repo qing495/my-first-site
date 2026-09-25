@@ -64,23 +64,23 @@
             overflow: hidden;
         }
 
-        /* 玩家 */
+        /* 玩家角色 */
         #player {
             position: absolute;
 
-            width: 36px;
-            height: 36px;
+            width: 64px;
+            height: 64px;
 
             left: 40px;
             top: 40px;
 
-            background: #3977d4;
+            object-fit: contain;
 
-            border: 3px solid #222;
-            border-radius: 8px;
+            user-select: none;
+            pointer-events: none;
         }
 
-        /* 收集物 */
+        /* 星星 */
         #item {
             position: absolute;
 
@@ -98,7 +98,6 @@
 
         #message {
             height: 32px;
-
             margin-top: 12px;
 
             font-size: 22px;
@@ -107,7 +106,6 @@
 
         button {
             margin-top: 10px;
-
             padding: 10px 20px;
 
             border: none;
@@ -147,7 +145,12 @@
 
     <div id="game">
 
-        <div id="player"></div>
+        <img
+            id="player"
+            src="https://dbu9btjyfhr28qsx.public.blob.vercel-storage.com/player.png"
+            alt="玩家角色"
+            draggable="false"
+        >
 
         <div id="item">
             ⭐
@@ -167,10 +170,6 @@
 
 <script>
 
-    // =========================
-    // 获取网页里的游戏对象
-    // =========================
-
     const game =
         document.getElementById("game");
 
@@ -187,28 +186,25 @@
         document.getElementById("message");
 
 
-    // =========================
-    // 游戏数据
-    // =========================
-
+    // 玩家位置
     let playerX = 40;
     let playerY = 40;
 
+    // 当前分数
     let score = 0;
 
-    const playerSize = 36;
+    // 玩家尺寸
+    const playerSize = 64;
+
+    // 星星尺寸
     const itemSize = 28;
 
-    // 每次移动多少像素
+    // 每次按键移动距离
     const speed = 20;
 
-    // 胜利需要多少分
+    // 胜利目标
     const targetScore = 10;
 
-
-    // =========================
-    // 更新玩家位置
-    // =========================
 
     function updatePlayer() {
 
@@ -219,10 +215,6 @@
             playerY + "px";
     }
 
-
-    // =========================
-    // 随机移动星星
-    // =========================
 
     function moveItem() {
 
@@ -259,10 +251,6 @@
     }
 
 
-    // =========================
-    // 判断有没有碰到星星
-    // =========================
-
     function checkCollision() {
 
         const playerRect =
@@ -287,7 +275,6 @@
                 score;
 
 
-            // 达到目标分数
             if (score >= targetScore) {
 
                 message.textContent =
@@ -305,10 +292,6 @@
     }
 
 
-    // =========================
-    // 键盘移动
-    // =========================
-
     document.addEventListener(
         "keydown",
         function(event) {
@@ -320,10 +303,13 @@
                 game.clientHeight;
 
 
-            // 左
+            const key =
+                event.key.toLowerCase();
+
+
             if (
                 event.key === "ArrowLeft" ||
-                event.key.toLowerCase() === "a"
+                key === "a"
             ) {
 
                 playerX -= speed;
@@ -331,10 +317,9 @@
             }
 
 
-            // 右
             if (
                 event.key === "ArrowRight" ||
-                event.key.toLowerCase() === "d"
+                key === "d"
             ) {
 
                 playerX += speed;
@@ -342,10 +327,9 @@
             }
 
 
-            // 上
             if (
                 event.key === "ArrowUp" ||
-                event.key.toLowerCase() === "w"
+                key === "w"
             ) {
 
                 playerY -= speed;
@@ -353,20 +337,15 @@
             }
 
 
-            // 下
             if (
                 event.key === "ArrowDown" ||
-                event.key.toLowerCase() === "s"
+                key === "s"
             ) {
 
                 playerY += speed;
 
             }
 
-
-            // =========================
-            // 防止角色跑出地图
-            // =========================
 
             playerX =
                 Math.max(
@@ -393,7 +372,6 @@
             checkCollision();
 
 
-            // 防止方向键滚动网页
             if (
                 event.key.startsWith("Arrow")
             ) {
@@ -404,10 +382,6 @@
         }
     );
 
-
-    // =========================
-    // 重新开始
-    // =========================
 
     function resetGame() {
 
@@ -432,10 +406,6 @@
         moveItem();
     }
 
-
-    // =========================
-    // 游戏开始
-    // =========================
 
     updatePlayer();
 
